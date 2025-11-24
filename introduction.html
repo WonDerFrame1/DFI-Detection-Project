@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Image AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            background-color: #05040d; 
+            color: white;
+            overflow-x: hidden; 
+            overflow-y: hidden; 
+            height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+            background-image:
+                linear-gradient(to right bottom, #05040d, #06050f, #080611, #090813, #0a0915, #0b0a17, #0c0b19, #0d0c1b, #0f0d1d, #100e1f, #110f21, #121023);
+        }
+
+        /* --- HEADER STYLES (MATCHED INDEX.HTML) --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            align-items: center;
+            /* Adjusted padding to match the Index/Dashboard style */
+            padding: 0px 50px 20px 70px; 
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo img {
+            height: 130px; /* Set logo height to match the previous version */
+            width: auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* Ensure the nav element itself doesn't have unnecessary margin, as it's now inside nav-menu */
+        .nav-menu nav {
+            margin-top: 8px;
+        }
+
+        .nav-menu nav a {
+            margin: 0 10px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem; /* Added font size for consistency */
+        }
+
+        .nav-menu nav a.active {
+            font-weight: bold;
+        }
+        
+        
+
+        .hero {
+            display: flex;
+            padding: 40px 40px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            
+        }
+
+        .left-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateX(-150px) translateY(5px); /* เลื่อนไปทางซ้ายและลง */
+        }
+
+        .circle-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .circle-bg img.circle-main-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 30px 10px rgba(47, 128, 237, 0.5);
+        }
+
+        .dashed-circle {
+            position: absolute;
+            width: calc(100% + 180px);
+            height: calc(100% + 180px);
+            border-radius: 50%;
+            background: repeating-conic-gradient(
+                from 0deg,
+                #475569 0deg 10deg,
+                transparent 10deg 20deg
+            );
+            -webkit-mask: radial-gradient(
+                farthest-side,
+                transparent calc(100% - 6px),
+                #000 calc(100% - 6px)
+            );
+            mask: radial-gradient(
+                farthest-side,
+                transparent calc(100% - 6px),
+                #000 calc(100% - 6px)
+            );
+        }
+
+        .icon-box {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+        }
+
+        .icon-box img {
+            max-width: 40px;
+            max-height: 40px;
+        }
+
+        .icon-box:first-child {
+            top: 30px;
+            right: 30px;
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .icon-box:last-child {
+            bottom: 30px;
+            left: 100px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: relative;
+        }
+
+        .icon-box:last-child img {
+            max-width: 60%;
+            max-height: 60%;
+        }
+
+        .right-section {
+            flex: 1;
+            padding-left: 40px;
+        }
+
+        .right-section h2 {
+            font-size: 28px;
+            margin-top: 0;
+            color: #56ccf2;
+            transform: translateX(-80px) translateY(-40px);
+            text-shadow: 0 0 10px rgba(86, 204, 242, 0.7);
+        }
+        .right-section h3 {
+            font-size: 28px;
+            margin-top: 30px;
+            color: #56ccf2;
+            transform: translateX(-80px) translateY(-33px);
+            text-shadow: 0 0 10px rgba(86, 204, 242, 0.7);
+        }
+
+        .right-section p {
+            line-height: 1.6;
+            margin-bottom: 80px;
+            margin-top: -50px;
+            transform: translateX(-60px) !important;
+            animation: shake 0.5s infinite alternate;
+            max-width: 95%;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes shake {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(2px); }
+        }
+
+        .circle-container-stacked {
+            position: absolute;
+            bottom: 150px;
+            left: 250px;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .outer-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #2f80ed;
+            border-radius: 50%;
+            opacity: 0.7;
+            box-shadow: 0 0 20px 5px rgba(47, 128, 237, 0.6);
+        }
+
+        .inner-circle {
+            width: 80%;
+            height: 80%;
+            background-color: #2f80ed;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .inner-circle img {
+            max-width: 50%;
+            max-height: 50%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .outer-circle-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #2f80ed;
+            border-radius: 50%;
+            opacity: 0.7;
+            box-shadow: 0 0 20px 5px rgba(47, 128, 237, 0.6);
+        }
+
+        .inner-circle-icon {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            background-color: #2f80ed;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .inner-circle-icon img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        /* --- Mobile Responsive Styles (Modified to Match Index Header) --- */
+        @media (max-width: 768px) {
+            
+            /* 1. Adjust Header - Match Index/Dashboard Header */
+            header {
+                flex-direction: row; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 10px 10px; /* Reduced padding on mobile, like dashboard */
+            }
+
+            .logo img {
+                height: 80px; /* Match dashboard logo size */
+            }
+
+            .nav-menu {
+                margin-top: 0; 
+                gap: 5px; /* Reduced gap */
+            }
+            
+            .nav-menu nav {
+                display: flex;
+                flex-wrap: nowrap; /* CRUCIAL: Keep links on one line, like dashboard */
+                justify-content: center;
+                gap: 5px; /* Reduced gap */
+                margin-top: 0; /* Remove top margin from default style */
+            }
+            
+            .nav-menu nav a {
+                margin: 0 3px; /* Reduced menu item margin, like dashboard */
+                font-size: 0.65rem; /* CRUCIAL: Smaller font size, like dashboard */
+                white-space: nowrap; /* CRUCIAL: Force text to stay on one line */
+                padding: 5px 3px;
+            }
+
+            body {
+                overflow-y: auto; 
+                height: auto;
+            }
+
+            /* 2. Adjust Hero Section */
+            .hero {
+                flex-direction: column;
+                padding: 40px 20px;
+            }
+
+            .left-section {
+                align-items: center;
+            }
+
+            .circle-container {
+                width: 300px; /* Scale down circle */
+                height: 300px;
+                transform: none; /* Reset transform */
+            }
+
+            .dashed-circle {
+                width: calc(100% + 100px); /* Scale down dashed circle */
+                height: calc(100% + 100px);
+            }
+
+            /* Hide complex positioned icons on mobile */
+            .icon-box[style*="top: -120px"],
+            .circle-container-stacked[style*="bottom: 430px"] {
+                display: none;
+            }
+            
+            /* 3. Adjust Right Section */
+            .right-section {
+                padding-left: 0;
+                margin-top: 40px;
+                text-align: center;
+                width: 100%;
+            }
+
+            .right-section h2, .right-section h3 {
+                transform: none; /* Reset transform */
+                text-align: center;
+            }
+
+            .right-section p {
+                transform: none !important; /* Reset transform and override !important */
+                margin-bottom: 40px;
+                margin-top: -20px;
+                max-width: 100%; /* Allow full width */
+                animation: shake 0.5s infinite alternate;
+            }
+
+            /* Redefine shake keyframes to be safe (though original is fine) */
+            @keyframes shake {
+                0% { transform: translateY(0); }
+                100% { transform: translateY(2px); }
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <header>
+    <a href="index.html">
+        <div class="logo">
+            <img src="imge/Logo 1.png" alt="DFI Logo" onerror="this.onerror=null;this.src='https://placehold.co/200x80/0f0c1f/ffffff?text=DFI';">
+        </div>
+    </a>
+        <div class="nav-menu">
+            <nav>
+                <a href="introduction.html" class="active">Introduction</a>
+                <a href="image-detection.html">Image Detection</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="about us.html">About Us</a>
+            </nav>
+            </div>
+    </header>
+
+    <section class="hero">
+        <div class="left-section">
+            <div class="circle-container">
+                <div class="circle-bg">
+                    <img src="imge/fake image.jpg" alt="AI Face" class="circle-main-image" onerror="this.onerror=null;this.src='https://placehold.co/360x360/1e2241/ffffff?text=AI+FACE';">
+                </div>
+                <div class="dashed-circle"></div>
+            </div>
+            <div class="icon-box" style="top: -120px; right: -110px; position: relative; width: 100px; height: 100px;">
+                <div class="outer-circle-icon"></div>
+                <div class="inner-circle-icon"><img src="imge/social.png" alt="Image Icon" style="max-width: 80%; max-height: 80%; object-fit: contain; filter: brightness(0) invert(1);"></div>
+            </div>
+            <div class="circle-container-stacked" style="bottom: 430px; left: 460px; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center;">
+                <div class="outer-circle"></div>
+                <div class="inner-circle"><img src="imge/result.png" alt="Image Icon" style="max-width: 50%; max-height: 50%; object-fit: contain; filter: brightness(0) invert(1);"></div>
+            </div>
+        </div>
+        <div class="right-section">
+            <h2>What is a Deepfake (Image)?</h2>
+            <p>Deepfake (Image) refers to AI technology used to create or alter human face images, often using deepfake techniques to generate faces of people who don’t exist or modify real people’s images. These synthetic images can be highly realistic, making it difficult for the human eye to distinguish between real and fake content. The advancement of this technology raises ethical questions and presents challenges for authentication in journalism, law enforcement, and social media platforms.</p>
+
+            <h3>Possible effects</h3>
+            <p> The use of Deepfake (Image) can lead to deception, the spread of misinformation, and violations of privacy. It may also reduce trust in technology and result in legal disputes. Misuse of Deepfake images can trigger public panic, damage reputations, and cause psychological harm to the individuals involved. These consequences highlight the urgent need for education, public awareness, and stricter enforcement of ethical guidelines in AI development and deployment. Therefore, it is essential to regulate and use Deepfake technology with caution.</p>
+        </div>
+    </section>
+
+    <script>
+    // --- JavaScript for Animated Background ---
+
+    const canvas = document.getElementById('bg-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to match the window
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        // Particle class (represents the dots)
+        class Particle {
+            constructor(x, y, size, color, speedX, speedY) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.color = color;
+                this.speedX = speedX;
+                this.speedY = speedY;
+            }
+
+            // Method to draw individual particle
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            // Method to update particle position
+            update() {
+                // Bounce off the edges
+                if (this.x + this.size > canvas.width || this.x - this.size < 0) {
+                    this.speedX = -this.speedX;
+                }
+                if (this.y + this.size > canvas.height || this.y - this.size < 0) {
+                    this.speedY = -this.speedY;
+                }
+
+                // Move the particle
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                this.draw();
+            }
+        }
+
+        // Function to create and initialize particles
+        function init() {
+            particlesArray = [];
+            // Adjust density of particles based on screen size
+            let numberOfParticles = (canvas.height * canvas.width) / 12000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1; // Smaller dots
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let speedX = (Math.random() * 0.4) - 0.2;
+                let speedY = (Math.random() * 0.4) - 0.2;
+                // Blue color for the dots
+                let color = `rgba(86, 204, 242, 0.8)`; 
+
+                particlesArray.push(new Particle(x, y, size, color, speedX, speedY));
+            }
+        }
+
+        // Function to draw lines between nearby particles
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                                        + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    
+                    // Check if particles are close enough to draw a line
+                    if (distance < (canvas.width/7) * (canvas.height/7)) {
+                        opacityValue = 1 - (distance/20000);
+                        // Brighter blue color for the lines
+                        ctx.strokeStyle = `rgba(86, 204, 242, ${opacityValue})`;
+                        ctx.lineWidth = 0.2; // Made the lines thinner
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            if(ctx) {
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+                for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                }
+                connect(); // Call the connect function in each frame
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init(); // Re-initialize particles for the new size
+        });
+
+        // Start the animation
+        init();
+        animate();
+    }
+</script>
+
+</body>
+</html>
